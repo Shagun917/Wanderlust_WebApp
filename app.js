@@ -10,6 +10,7 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 const listings = require("./routes/listing.js");
+const Listing = require("./models/listing");
 const session = require("express-session");
 const flash = require("connect-flash");
 const passport = require("passport");
@@ -82,6 +83,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
+
+
+app.post('/search', async (req, res) => {
+  const allListings = await Listing.find({location: { "$regex": ".*"+req.body.sea+".*", "$options": "i"} } );
+  console.log(allListings);
+  res.render("listings/index.ejs", { allListings });
+});
+
+
 
 
 
